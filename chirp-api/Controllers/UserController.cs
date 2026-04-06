@@ -33,7 +33,7 @@ public class UserController : Controller
     }
 
     [HttpDelete]
-    public IActionResult DeleteUser(UserRequest userRequest)
+    public IActionResult DeleteUser(string username, string password)
     {
         return Ok();
     }

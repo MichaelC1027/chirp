@@ -28,5 +28,11 @@ public class PostController : Controller
         return Ok();
     }
     
+    [HttpPut]
+    public IActionResult UpdateTweet(int postId, string content)
+    {
+        return Ok();
+    }
+    
     
 }
