@@ -2,11 +2,11 @@ namespace chirp_api.Models;
 
 public class Comment
 {
-    int Id { get; set; }
-    string Content { get; set; }
-    DateTime CreatedAt { get; set; }
-    int UserId { get; set; }
-    int PostId { get; set; }
-    int LikeCount { get; set; }
-    int ReplyCount { get; set; }
+    public int Id { get; set; }
+    public string Content { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public int UserId { get; set; }
+    public int PostId { get; set; }
+    public int LikeCount { get; set; }
+    public int ReplyCount { get; set; }
 }
