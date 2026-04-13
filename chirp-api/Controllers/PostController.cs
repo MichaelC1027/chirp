@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using chirp_api.Models;
-//using chirp_api.Services;
+using chirp_api.Services.Interfaces;
+using chirp_api.DTOs.Requests.Auth;
 
 namespace chirp_api.Controllers;
 
@@ -8,6 +8,13 @@ namespace chirp_api.Controllers;
 [ApiController]
 public class PostController : ControllerBase
 {
+    private readonly IPostService _postService;
+
+    public PostController(IPostService postService)
+    {
+        _postService = postService;
+    }
+    
     [HttpPost]
     [Route ("CreateTwet/{postId}/{content}")]
     public IActionResult CreateTweet(int postId, string content)

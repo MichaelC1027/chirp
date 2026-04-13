@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using chirp_api.Models;
-//using chirp_api.Services;
+using chirp_api.Services.Interfaces;
+using chirp_api.DTOs.Requests.Comment;
 
 namespace chirp_api.Controllers;
 
@@ -8,31 +8,90 @@ namespace chirp_api.Controllers;
 [ApiController]
 public class CommentController : ControllerBase
 {
-    [HttpPost]
-    [Route ("CreateComment/{postId}")]
-    public IActionResult CreateComment(int postId)
+    private readonly ICommentService _commentService;
+
+    public CommentController(ICommentService commentService)
     {
-        return Ok();
+        _commentService = commentService;
+    }
+    
+    [HttpPost]
+    [Route ("CreateComment")]
+    public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequest request)
+    {
+        try
+        {
+            var response = await _commentService.CreateComment(request.PostId, request.Content);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpGet]
     [Route ("GetComments")]
-    public IActionResult GetCommentsByPost(int postId)
+    public async Task<IActionResult> GetCommentsByPost([FromQuery] int postId)
     {
-        return Ok();
+        try
+        {
+            var response = await _commentService.GetCommentsByPost(postId);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpDelete]
-    [Route ("DeleteComment/{commentId}")]
-    public IActionResult DeleteComment(int commentId)
+    [Route ("DeleteComment")]
+    public async Task<IActionResult> DeleteComment([FromBody] DeleteCommentRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _commentService.DeleteComment(request.Id);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpPut]
-    [Route ("UpdateComment/{commentId}/{content}")]
-    public IActionResult UpdateComment(int commentId, string content)
+    [Route ("UpdateComment")]
+    public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _commentService.UpdateComment(request.Id, request.Content);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    [HttpGet]
+    [Route("GetComment/{commentId}")]
+    public async Task<IActionResult> GetComment([FromRoute] int commentId)
+    {
+        try
+        {
+            var response = await _commentService.GetComment(commentId);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

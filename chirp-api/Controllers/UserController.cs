@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using chirp_api.Models;
-//using chirp_api.Services;
+using chirp_api.Services.Interfaces;
+using chirp_api.DTOs.Requests.Auth;
 
 namespace chirp_api.Controllers;
 
@@ -8,19 +8,11 @@ namespace chirp_api.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    [HttpPost]
-    [Route("CreateUser/{userId}/{username}/{email}/{password}")]
-    
-    public IActionResult CreateUser(int userId, string username,string email, string password)
-    {
-        return Ok();
-    }
+    private readonly IUserService _userService;
 
-    [HttpPost]
-    [Route("LoginUser/{username}/{password}")]
-    public IActionResult LoginUser(string username, string password)
+    public UserController(IUserService userService)
     {
-        return Ok();
+        _userService = userService;
     }
 
     [HttpGet]

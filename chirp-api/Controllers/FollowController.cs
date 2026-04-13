@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using chirp_api.Models;
-//using chirp_api.Services;
+using chirp_api.Services.Interfaces;
+using chirp_api.DTOs.Requests.Auth;
 
 namespace chirp_api.Controllers;
 
@@ -8,8 +8,15 @@ namespace chirp_api.Controllers;
 [ApiController]
 public class FollowController :ControllerBase
 {
+    private readonly IFollowService _followService;
+
+    public FollowController(IFollowService followService)
+    {
+        _followService = followService;
+    }
+    
     [HttpPost]
-    [Route ("CreateFollow/{userId}/{followerId}")]
+    [Route ("CreateFollow")]
     public IActionResult CreateFollow(int userId, int followerId)
     {
         return Ok();
