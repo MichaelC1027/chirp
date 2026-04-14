@@ -12,4 +12,24 @@ public class FollowService : IFollowService
     {
         _context = context;
     }
+
+    public async Task<FollowResponse> CreateFollow(int followerId, int followingId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<FollowResponse>> GetFollowers(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<FollowResponse>> GetFollowing(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> DeleteFollow(int followerId, int followingId)
+    {
+        throw new NotImplementedException();
+    }
 }

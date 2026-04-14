@@ -13,4 +13,26 @@ public class LikeService : ILikeService
         _context = context;
     }
 
+    public async Task<LikeResponse> CreateLikeOnPost(int? postId, int userId)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<LikeResponse> CreateLikeOnComment(int? commentId, int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> DeleteLikeOnPost(int? postId, int userId)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<bool> DeleteLikeOnComment(int? commentId, int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<LikeResponse>> GetLikes(int postId)
+    {
+        throw new NotImplementedException();
+    }
 }

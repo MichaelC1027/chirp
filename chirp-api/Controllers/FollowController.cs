@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
-using chirp_api.DTOs.Requests.Auth;
+using chirp_api.DTOs.Requests.Follow;
 
 namespace chirp_api.Controllers;
 
@@ -17,29 +17,61 @@ public class FollowController :ControllerBase
     
     [HttpPost]
     [Route ("CreateFollow")]
-    public IActionResult CreateFollow(int userId, int followerId)
+    public async Task<IActionResult> CreateFollow([FromBody] CreateFollowRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _followService.CreateFollow(request.FollowerId,request.FollowingId);
+            return Ok(response);
+        }catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     [HttpGet]
     [Route ("GetFollowers/{userId}")]
-    public IActionResult GetFollowers(int userId)
+    public async Task<IActionResult> GetFollowers([FromRoute] int userId)
     {
-        return Ok();
+        try
+        {
+            var response = await _followService.GetFollowers(userId);
+            return Ok(response);
+        }catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     [HttpGet]
     [Route ("GetFollowing/{userId}")]
-    public IActionResult GetFollowing(int userId)
+    public async Task<IActionResult> GetFollowing([FromRoute] int userId)
     {
-        return Ok();
+        try
+        {
+            var response = await _followService.GetFollowing(userId);
+            return Ok(response);
+        }catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpDelete]
-    [Route ("DeleteFollow/{userId}/{followerId}")]
-    public IActionResult DeleteFollow(int userId, int followerId)
+    [Route ("DeleteFollow")]
+    public async Task<IActionResult> DeleteFollow([FromBody] DeleteFollowRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _followService.DeleteFollow(request.FollowerId,request.FollowingId);
+            return Ok(response);
+        }catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

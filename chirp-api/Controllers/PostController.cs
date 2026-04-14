@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
-using chirp_api.DTOs.Requests.Auth;
+using chirp_api.DTOs.Requests.Post;
 
 namespace chirp_api.Controllers;
 
@@ -16,38 +16,83 @@ public class PostController : ControllerBase
     }
     
     [HttpPost]
-    [Route ("CreateTwet/{postId}/{content}")]
-    public IActionResult CreateTweet(int postId, string content)
+    [Route ("CreatePost")]
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _postService.CreatePost(request.Content);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpGet]
-    [Route ("GetTweets")]
-    public IActionResult GetTweets()
+    [Route ("GetPosts")]
+    public async Task<IActionResult>  GetPosts()
     {
-        return Ok();
+        try
+        {
+            var response = await _postService.GetPosts();
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     [HttpGet]
-    [Route("GetTweet/{postId}")]
-    public IActionResult GetTweet(int postId)
+    [Route("GetPost/{postId}")]
+    public async Task<IActionResult>  GetPost([FromRoute] int postId)
     {
-        return Ok();
+        try
+        {
+            var response = await _postService.GetPost(postId);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpDelete]
-    [Route("DeleteTweet/{postId}")]
-    public IActionResult DeleteTweet(int postId)
+    [Route("DeletePost")]
+    public async Task<IActionResult>  DeletePost([FromBody] DeletePostRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _postService.DeletePost(request.Id);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     [HttpPut]
-    [Route("UpdateTweet/{postId}/{content}")]
-    public IActionResult UpdateTweet(int postId, string content)
+    [Route("UpdatePost")]
+    public async Task<IActionResult> UpdatePost([FromBody] UpdatePostRequest request)
     {
-        return Ok();
+        try
+        {
+            var response = await _postService.UpdatePost(request.Id, request.Content);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     

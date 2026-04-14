@@ -13,4 +13,28 @@ public class PostService : IPostService
         _context = context;
     }
 
+    public async Task<PostResponse> CreatePost(string content)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<PostResponse>> GetPosts()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PostResponse> GetPost(int postId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> DeletePost(int postId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PostResponse> UpdatePost(int postId, string content)
+    {
+        throw new NotImplementedException();
+    }
 }
