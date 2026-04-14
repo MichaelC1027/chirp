@@ -1,12 +1,14 @@
 using chirp_api.DTOs.Requests.Like;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace chirp_api.Controllers;
 
 [Route ("api/[controller]")]
 [ApiController]
+[Authorize]
 public class LikeController : ControllerBase
 {
     private readonly ILikeService _likeService;

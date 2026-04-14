@@ -1,7 +1,7 @@
 using chirp_api.DTOs.Requests.User;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace chirp_api.Controllers;
 

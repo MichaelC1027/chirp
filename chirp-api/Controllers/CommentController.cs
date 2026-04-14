@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
 using chirp_api.DTOs.Requests.Comment;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace chirp_api.Controllers;
 
 [Route ("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CommentController : ControllerBase
 {
     private readonly ICommentService _commentService;

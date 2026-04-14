@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
 using chirp_api.DTOs.Requests.Follow;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace chirp_api.Controllers;
 
 [Route ("api/[controller]")]
 [ApiController]
+[Authorize]
 public class FollowController :ControllerBase
 {
     private readonly IFollowService _followService;

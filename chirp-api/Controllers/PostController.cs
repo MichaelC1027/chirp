@@ -1,11 +1,14 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
 using chirp_api.DTOs.Requests.Post;
+using Microsoft.AspNetCore.Authorization;
 
 namespace chirp_api.Controllers;
 
 [Route ("api/[controller]")]
 [ApiController]
+[Authorize]
 public class PostController : ControllerBase
 {
     private readonly IPostService _postService;
@@ -21,7 +24,8 @@ public class PostController : ControllerBase
     {
         try
         {
-            var response = await _postService.CreatePost(request.Content);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _postService.CreatePost(request.Content,userId);
             return Ok(response);
         }
         catch (Exception e)

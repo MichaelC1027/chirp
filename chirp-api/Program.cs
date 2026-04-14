@@ -1,17 +1,55 @@
 using chirp_api.Data;
-using Microsoft.EntityFrameworkCore;
+using chirp_api.Services;
+using chirp_api.Services.Interfaces;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+//The Builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//The Database Service
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+//Adding IServices and Services to scope
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IFollowService, FollowService>();
+builder.Services.AddScoped<ILikeService, LikeService>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
+//JWT Authentication section
+//getting the key, issuer, and audience
+var key = builder.Configuration.GetSection("JWT:Key").Value;
+var issuer = builder.Configuration.GetSection("JWT:Issuer").Value;
+var audience = builder.Configuration.GetSection("JWT:Audience").Value;
+
+//builder call for JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
+    };
+});
+
+//Adding controller
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+//leaving this openAPI call incase (delete in prod if its useless)
 builder.Services.AddOpenApi();
 
+//Build the app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,10 +58,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection();//HTTPS call
 
-app.UseAuthorization();
+app.UseAuthentication(); //JWT Authentication
 
-app.MapControllers();
+app.UseAuthorization(); //JWT Authorization
 
-app.Run();
+app.MapControllers();//API Endpoints
+
+app.Run();//this just runs it 
