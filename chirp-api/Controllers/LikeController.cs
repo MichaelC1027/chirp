@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using chirp_api.DTOs.Requests.Like;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
@@ -24,7 +25,8 @@ public class LikeController : ControllerBase
     {
         try
         {
-            var response = await _likeService.CreateLikeOnPost(request.PostId, request.UserId);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _likeService.CreateLikeOnPost(request.PostId, userId);
             return Ok(response);
         }
         catch (Exception e)
@@ -40,7 +42,8 @@ public class LikeController : ControllerBase
     {
         try
         {
-            var response = await _likeService.CreateLikeOnComment(request.CommentId, request.UserId);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _likeService.CreateLikeOnComment(request.CommentId, userId);
             return Ok(response);
         }
         catch (Exception e)
@@ -56,7 +59,8 @@ public class LikeController : ControllerBase
     {
         try
         {
-            var response = await _likeService.DeleteLikeOnPost(request.PostId, request.UserId);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _likeService.DeleteLikeOnPost(request.PostId, userId);
             return Ok(response);
         }
         catch (Exception e)
@@ -72,7 +76,8 @@ public class LikeController : ControllerBase
     {
         try
         {
-            var response = await _likeService.DeleteLikeOnComment(request.CommentId, request.UserId);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _likeService.DeleteLikeOnComment(request.CommentId, userId);
             return Ok(response);
         }
         catch (Exception e)
@@ -83,12 +88,28 @@ public class LikeController : ControllerBase
     }
     
     [HttpGet]
-    [Route ("GetLikes/{postId}")]
-    public async Task<IActionResult> GetLikes([FromRoute] int postId)
+    [Route ("GetLikesOnPosts/{postId}")]
+    public async Task<IActionResult> GetLikesOnPost([FromRoute] int postId)
     {
         try
         {
-            var response = await _likeService.GetLikes(postId);
+            var response = await _likeService.GetLikesOnPosts(postId);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    [HttpGet]
+    [Route("GetLikesOnComments/{commentId}")]
+    public async Task<IActionResult> GetLikesOnComment([FromRoute] int commentId)
+    {
+        try
+        {
+            var response = await _likeService.GetLikesOnComments(commentId);
             return Ok(response);
         }
         catch (Exception e)

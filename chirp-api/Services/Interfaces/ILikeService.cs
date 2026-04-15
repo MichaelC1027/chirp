@@ -8,5 +8,6 @@ public interface ILikeService
     Task<LikeResponse> CreateLikeOnComment(int? commentId, int userId);
     Task<bool> DeleteLikeOnPost(int? postId, int userId);
     Task<bool> DeleteLikeOnComment(int? commentId, int userId);
-    Task<IEnumerable<LikeResponse>> GetLikes(int postId);
+    Task<IEnumerable<LikeResponse>> GetLikesOnPosts(int postId);
+    Task<IEnumerable<LikeResponse>> GetLikesOnComments(int commentId);
 }

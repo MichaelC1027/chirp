@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using chirp_api.DTOs.Requests.User;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
@@ -7,6 +8,7 @@ namespace chirp_api.Controllers;
 
 [Route ("api/[controller]")]
 [ApiController]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -70,7 +72,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var response = await _userService.UpdateUser(request.Id,request.Username, request.Email, request.Password, request.Bio, request.ProfilePicture);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _userService.UpdateUser(userId, request.Username, request.Email, request.Password, request.Bio, request.ProfilePicture);
             return Ok(response);
         }
         catch (Exception e)
@@ -82,11 +85,12 @@ public class UserController : ControllerBase
 
     [HttpDelete]
     [Route("DeleteUser")]
-    public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequest request)
+    public async Task<IActionResult> DeleteUser()
     {
         try
         {
-            var response = await _userService.DeleteUser(request.Id);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _userService.DeleteUser(userId);
             return Ok(response);
         }
         catch (Exception e)

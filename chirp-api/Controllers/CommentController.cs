@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
 using chirp_api.DTOs.Requests.Comment;
@@ -24,7 +25,8 @@ public class CommentController : ControllerBase
     {
         try
         {
-            var response = await _commentService.CreateComment(request.PostId, request.Content);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _commentService.CreateComment(request.PostId, request.Content, userId);
             return Ok(response);
         }
         catch (Exception e)

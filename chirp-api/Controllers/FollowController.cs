@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using chirp_api.Services.Interfaces;
 using chirp_api.DTOs.Requests.Follow;
@@ -24,7 +25,8 @@ public class FollowController :ControllerBase
     {
         try
         {
-            var response = await _followService.CreateFollow(request.FollowerId,request.FollowingId);
+            var followerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _followService.CreateFollow(followerId, request.FollowingId);
             return Ok(response);
         }catch (Exception e)
         {
@@ -38,7 +40,7 @@ public class FollowController :ControllerBase
     public async Task<IActionResult> GetFollowers([FromRoute] int userId)
     {
         try
-        {
+        { 
             var response = await _followService.GetFollowers(userId);
             return Ok(response);
         }catch (Exception e)
@@ -69,7 +71,8 @@ public class FollowController :ControllerBase
     {
         try
         {
-            var response = await _followService.DeleteFollow(request.FollowerId,request.FollowingId);
+            var followerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _followService.DeleteFollow(followerId, request.FollowingId);
             return Ok(response);
         }catch (Exception e)
         {
