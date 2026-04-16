@@ -22,7 +22,7 @@ public class UserService : IUserService
         {
             Id = u.Id,
             Username = u.Username,
-            Email = u.Email,
+            Email = "",
             Bio = u.Bio,
             ProfilePicture = u.ProfilePicture,
             CreatedAt = u.CreatedAt,
@@ -45,7 +45,7 @@ public class UserService : IUserService
         {
             Id = existingUser.Id,
             Username = existingUser.Username,
-            Email = existingUser.Email,
+            Email = "",
             Bio = existingUser.Bio,
             ProfilePicture = existingUser.ProfilePicture,
             CreatedAt = existingUser.CreatedAt,
@@ -68,7 +68,7 @@ public class UserService : IUserService
         {
             Id = existingUser.Id,
             Username = existingUser.Username,
-            Email = existingUser.Email,
+            Email = "",
             Bio = existingUser.Bio,
             ProfilePicture = existingUser.ProfilePicture,
             CreatedAt = existingUser.CreatedAt,
@@ -87,13 +87,31 @@ public class UserService : IUserService
         }
         
         //checking what is filled and what is null
-        if(username != null) existingUser.Username = username;
-        if(email != null) existingUser.Email = email;
-        if(password != null) existingUser.Password = BCrypt.Net.BCrypt.HashPassword(password);
-        if(bio != null) existingUser.Bio = bio;
-        if(profilePicture != null) existingUser.ProfilePicture = profilePicture;
+        if(username != null)
+        {
+            var takenUsername = await _context.Users.AnyAsync(u => u.Username == username && u.Id != userId);
+            if(takenUsername) { throw new Exception("username already taken"); }
+            existingUser.Username = username;
+        }
+        if(email != null)
+        {
+            var takenEmail = await _context.Users.AnyAsync(u => u.Email == email && u.Id != userId);
+            if(takenEmail) { throw new Exception("email already taken"); }
+            existingUser.Email = email;
+        }
+        if(password != null)
+        {
+            existingUser.Password = BCrypt.Net.BCrypt.HashPassword(password);
+        }
+        if(bio != null)
+        {
+            existingUser.Bio = bio;
+        }
+        if(profilePicture != null)
+        {
+            existingUser.ProfilePicture = profilePicture;
+        }
         
-        _context.Users.Update(existingUser);
         await _context.SaveChangesAsync();
         return new UserResponse
         {

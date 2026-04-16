@@ -41,7 +41,7 @@ public class AuthService : IAuthService
             Password = BCrypt.Net.BCrypt.HashPassword(password),
             CreatedAt = DateTime.UtcNow,
             Bio = "Edit me!",
-            ProfilePicture = "https://imgur.com/gallery/teacup-frog-EMYhrEM",
+            ProfilePicture = "/defaultpfp.jpg",
             IsVerified = false,
             IsAdmin = false,
             IsBanned = false
@@ -75,7 +75,7 @@ public class AuthService : IAuthService
 
     private string GenerateJwtToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]!));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]

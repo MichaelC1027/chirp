@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Scalar.AspNetCore;
 
 //The Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -56,9 +57,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();//HTTPS call
+
+app.UseStaticFiles(); //for the default PFP
 
 app.UseAuthentication(); //JWT Authentication
 

@@ -31,13 +31,13 @@ public class CommentController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
     [HttpGet]
     [Route ("GetComments")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetCommentsByPost([FromQuery] int postId)
     {
         try
@@ -47,8 +47,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
     
@@ -58,13 +57,13 @@ public class CommentController : ControllerBase
     {
         try
         {
-            var response = await _commentService.DeleteComment(request.Id);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _commentService.DeleteComment(request.Id,userId);
             return Ok(response);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
@@ -74,18 +73,19 @@ public class CommentController : ControllerBase
     {
         try
         {
-            var response = await _commentService.UpdateComment(request.Id, request.Content);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _commentService.UpdateComment(request.Id, request.Content,userId);
             return Ok(response);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 
     [HttpGet]
     [Route("GetComment/{commentId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetComment([FromRoute] int commentId)
     {
         try
@@ -95,8 +95,7 @@ public class CommentController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
 }

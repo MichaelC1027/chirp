@@ -27,8 +27,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return Conflict(e.Message);
         }
     }
 
@@ -43,8 +42,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return Unauthorized(e.Message);
         }
     }
     

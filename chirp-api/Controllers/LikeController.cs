@@ -31,8 +31,7 @@ public class LikeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
@@ -48,8 +47,7 @@ public class LikeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 
@@ -65,8 +63,7 @@ public class LikeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
@@ -82,13 +79,13 @@ public class LikeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
     [HttpGet]
     [Route ("GetLikesOnPosts/{postId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetLikesOnPost([FromRoute] int postId)
     {
         try
@@ -98,13 +95,13 @@ public class LikeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
 
     [HttpGet]
     [Route("GetLikesOnComments/{commentId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetLikesOnComment([FromRoute] int commentId)
     {
         try
@@ -114,8 +111,7 @@ public class LikeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
 }

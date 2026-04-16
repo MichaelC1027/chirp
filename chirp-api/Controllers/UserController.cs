@@ -20,6 +20,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("GetUsers")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetUsers()
     {
         try
@@ -29,13 +30,13 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
 
     [HttpGet]
     [Route("GetUserByUsername/{username}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
     {
         try
@@ -45,13 +46,13 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
     
     [HttpGet]
     [Route("GetUserById/{userId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetUserById([FromRoute] int userId)
     {
         try
@@ -61,8 +62,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
     
@@ -78,8 +78,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 
@@ -95,8 +94,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 }

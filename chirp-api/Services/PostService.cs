@@ -17,14 +17,13 @@ public class PostService : IPostService
 
     public async Task<PostResponse> CreatePost(string content, int userId)
     {
+        
         //creating a new post 
         var post = new Post
         {
             Content = content,
             UserId = userId,
-            CreatedAt = DateTime.UtcNow,
-            LikeCount = 0,
-            CommentCount = 0
+            CreatedAt = DateTime.UtcNow
         };
         
         //adding to the database
@@ -38,22 +37,37 @@ public class PostService : IPostService
             Content = post.Content,
             UserId = post.UserId,
             CreatedAt = post.CreatedAt,
-            LikeCount = post.LikeCount,
-            CommentCount = post.CommentCount
+            LikeCount = 0,
+            CommentCount = 0
         };
     }
 
     public async Task<IEnumerable<PostResponse>> GetPosts()
     {
         var posts = await _context.Posts.OrderByDescending(p => p.CreatedAt).ToListAsync();
+        
+        //getting the like and comment count
+        var postIds = posts.Select(p => p.Id).ToList();
+        var likeCounts = await _context.Likes
+            .Where(l => l.PostId != null && postIds.Contains(l.PostId!.Value))
+            .GroupBy(l => l.PostId)
+            .Select(g => new { PostId = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        var commentCounts = await _context.Comments
+            .Where(c => postIds.Contains(c.PostId))
+            .GroupBy(c => c.PostId)
+            .Select(g => new { PostId = g.Key, Count = g.Count() })
+            .ToListAsync();
+        
         return posts.Select(p => new PostResponse
         {
             Id = p.Id,
             Content = p.Content,
             UserId = p.UserId,
             CreatedAt = p.CreatedAt,
-            LikeCount = p.LikeCount,
-            CommentCount = p.CommentCount
+            LikeCount = likeCounts.FirstOrDefault(l => l.PostId == p.Id)?.Count ?? 0,
+            CommentCount = commentCounts.FirstOrDefault(c => c.PostId == p.Id)?.Count ?? 0
         });
     }
 
@@ -66,6 +80,10 @@ public class PostService : IPostService
             throw new Exception("Post not found"); //throwing an exception
         }
         
+        //getting the like and comment count
+        var likeCount = await _context.Likes.CountAsync(l => l.PostId == postId);
+        var commentCount = await _context.Comments.CountAsync(c => c.PostId == postId);
+        
         //returning the post by ID
         return new PostResponse
         {
@@ -73,18 +91,23 @@ public class PostService : IPostService
             Content = existingPost.Content,
             UserId = existingPost.UserId,
             CreatedAt = existingPost.CreatedAt,
-            LikeCount = existingPost.LikeCount,
-            CommentCount = existingPost.CommentCount
+            LikeCount = likeCount,
+            CommentCount = commentCount
         };
     }
 
-    public async Task<bool> DeletePost(int postId)
+    public async Task<bool> DeletePost(int postId, int userId)
     {
         //checking if it exists
         var existingPost = await _context.Posts.FirstOrDefaultAsync(p => p.Id == postId);
         if (existingPost == null)
         {
             throw new Exception("Post not found");
+        }
+        
+        if (existingPost.UserId != userId)
+        {
+            throw new Exception("You are not the owner of this post. you do not have permission to delete this post");
         }
         
         //removing from the DB
@@ -95,7 +118,7 @@ public class PostService : IPostService
         return true;
     }
 
-    public async Task<PostResponse> UpdatePost(int postId, string content)
+    public async Task<PostResponse> UpdatePost(int postId, string content, int userId)
     {
         //checking if it exists
         var existingPost = await _context.Posts.FirstOrDefaultAsync(p => p.Id == postId);
@@ -103,6 +126,15 @@ public class PostService : IPostService
         {
             throw new Exception("Post not found");
         }
+
+        if (existingPost.UserId != userId)
+        {
+            throw new Exception("You are not the owner of this post. you do not have permission to edit this post");
+        }
+        
+        //getting the like and comment count
+        var likeCount = await _context.Likes.CountAsync(l => l.PostId == postId);
+        var commentCount = await _context.Comments.CountAsync(c => c.PostId == postId);
         
         //updating the post
         existingPost.Content = content;
@@ -115,8 +147,8 @@ public class PostService : IPostService
             Content = existingPost.Content,
             UserId = existingPost.UserId,
             CreatedAt = existingPost.CreatedAt,
-            LikeCount = existingPost.LikeCount,
-            CommentCount = existingPost.CommentCount
+            LikeCount = likeCount,
+            CommentCount = commentCount
         };
     }
 }

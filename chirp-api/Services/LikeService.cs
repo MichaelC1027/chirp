@@ -17,6 +17,17 @@ public class LikeService : ILikeService
 
     public async Task<LikeResponse> CreateLikeOnPost(int? postId, int userId)
     {
+        //checking if the post exists
+        if(postId == null){ throw new Exception("postId is required"); }
+        
+        //checking if the post is even in the DB
+        var existingPost = await _context.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+        if (existingPost == null)
+        {
+            throw new Exception("post not found");
+        }
+        
+        
         //creating new like 
         var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
         if (existingLike != null)
@@ -36,6 +47,7 @@ public class LikeService : ILikeService
 
         return new LikeResponse
         {
+            Id = like.Id,
             PostId = like.PostId,
             UserId = like.UserId,
             CommentId = like.CommentId
@@ -43,6 +55,16 @@ public class LikeService : ILikeService
     }
     public async Task<LikeResponse> CreateLikeOnComment(int? commentId, int userId)
     {
+        //checking if the comment exists
+        if(commentId == null){ throw new Exception("comment not found"); }
+        
+        //check if the comment is even in the DB
+        var existingComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
+        if (existingComment == null)
+        {
+            throw new Exception("comment not found");
+        }
+        
         var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.CommentId == commentId && l.UserId == userId);
         if (existingLike != null)
         {
@@ -61,6 +83,7 @@ public class LikeService : ILikeService
         
         return new LikeResponse
         {
+            Id = like.Id,
             PostId = like.PostId,
             UserId = like.UserId,
             CommentId = like.CommentId
@@ -69,6 +92,9 @@ public class LikeService : ILikeService
 
     public async Task<bool> DeleteLikeOnPost(int? postId, int userId)
     {
+        //checking if the post exists
+        if(postId == null){ throw new Exception("post not found"); }
+        
         var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
         if (existingLike == null)
         {
@@ -81,6 +107,9 @@ public class LikeService : ILikeService
     }
     public async Task<bool> DeleteLikeOnComment(int? commentId, int userId)
     {
+        //checking if the comment exists
+        if(commentId == null){ throw new Exception("comment not found"); }
+        
         var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.CommentId == commentId && l.UserId == userId);
         if (existingLike == null)
         {
@@ -97,6 +126,7 @@ public class LikeService : ILikeService
         var likes = await _context.Likes.Where(l => l.PostId == postId).ToListAsync();
         return likes.Select(l => new LikeResponse
         {
+            Id = l.Id,
             PostId = l.PostId,
             UserId = l.UserId
         });
@@ -107,6 +137,7 @@ public class LikeService : ILikeService
         var likes = await _context.Likes.Where(l => l.CommentId == commentId).ToListAsync();
         return likes.Select(l => new LikeResponse
         {
+            Id = l.Id,
             UserId = l.UserId,
             CommentId = l.CommentId
         });

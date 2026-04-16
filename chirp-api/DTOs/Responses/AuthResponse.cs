@@ -2,7 +2,7 @@ namespace chirp_api.DTOs.Responses;
 
 public class AuthResponse
 {
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string Token { get; set; }
+    public required string Username { get; set; }
+    public required string Email { get; set; }
+    public required string Token { get; set; }
 }

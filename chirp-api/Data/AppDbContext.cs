@@ -15,14 +15,6 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Like: PostId and CommentId are optional (one must be set, not both)
-        modelBuilder.Entity<Like>()
-            .Property(l => l.PostId)
-            .IsRequired(false);
-
-        modelBuilder.Entity<Like>()
-            .Property(l => l.CommentId)
-            .IsRequired(false);
 
         // Prevent a user from liking the same post or comment twice
         modelBuilder.Entity<Like>()
@@ -39,5 +31,71 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Follow>()
             .HasIndex(f => new { f.FollowerId, f.FollowingId })
             .IsUnique();
+        
+        //check for duplicate usernames and emails
+        modelBuilder.Entity <User>()
+            .HasIndex(u => u.Username).IsUnique();
+        
+        modelBuilder.Entity <User>()
+            .HasIndex(u => u.Email).IsUnique();
+        
+        /*cascade deleting*/
+        // Post -> User
+        modelBuilder.Entity<Post>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Comment -> User
+        modelBuilder.Entity<Comment>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Comment -> Post
+        modelBuilder.Entity<Comment>()
+            .HasOne<Post>()
+            .WithMany()
+            .HasForeignKey(c => c.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Like -> User
+        modelBuilder.Entity<Like>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Like -> Post (nullable)
+        modelBuilder.Entity<Like>()
+            .HasOne<Post>()
+            .WithMany()
+            .HasForeignKey(l => l.PostId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Like -> Comment (nullable)
+        modelBuilder.Entity<Like>()
+            .HasOne<Comment>()
+            .WithMany()
+            .HasForeignKey(l => l.CommentId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Follow -> User (follower side)
+        modelBuilder.Entity<Follow>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(f => f.FollowerId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Follow -> User (following side)
+        modelBuilder.Entity<Follow>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(f => f.FollowingId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

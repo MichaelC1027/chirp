@@ -30,13 +30,13 @@ public class FollowController :ControllerBase
             return Ok(response);
         }catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 
     [HttpGet]
     [Route ("GetFollowers/{userId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetFollowers([FromRoute] int userId)
     {
         try
@@ -45,13 +45,13 @@ public class FollowController :ControllerBase
             return Ok(response);
         }catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
 
     [HttpGet]
     [Route ("GetFollowing/{userId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetFollowing([FromRoute] int userId)
     {
         try
@@ -60,8 +60,7 @@ public class FollowController :ControllerBase
             return Ok(response);
         }catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
     
@@ -76,8 +75,7 @@ public class FollowController :ControllerBase
             return Ok(response);
         }catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 }

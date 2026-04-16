@@ -18,18 +18,24 @@ public class FollowService : IFollowService
 
     public async Task<bool> CreateFollow(int followerId, int followingId)
     {
+        //checking if the user is trying to follow themselves
+        if(followerId == followingId)
+        {
+            throw new Exception("you cannot follow yourself");
+        }
+        
         var existingFollow = await _context.Follows.FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FollowingId == followingId);
         if(existingFollow != null)
         {
             throw new Exception("you are already following this user");
         }
 
-        var follower = new Follow()
+        var follower = new Follow
         {
             FollowerId = followerId,
             FollowingId = followingId
         };
-
+        
         await _context.Follows.AddAsync(follower);
         await _context.SaveChangesAsync();
         return true;
@@ -62,7 +68,7 @@ public class FollowService : IFollowService
         var existingFollow = await _context.Follows.FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FollowingId == followingId);
         if (existingFollow == null)
         {
-            throw new Exception("you are already not following this user");
+            throw new Exception("you are not following this user");
         }
         
         _context.Follows.Remove(existingFollow);

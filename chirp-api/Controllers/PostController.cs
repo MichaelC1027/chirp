@@ -30,13 +30,13 @@ public class PostController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
     [HttpGet]
     [Route ("GetPosts")]
+    [AllowAnonymous]
     public async Task<IActionResult>  GetPosts()
     {
         try
@@ -46,13 +46,13 @@ public class PostController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
 
     [HttpGet]
     [Route("GetPost/{postId}")]
+    [AllowAnonymous]
     public async Task<IActionResult>  GetPost([FromRoute] int postId)
     {
         try
@@ -62,8 +62,7 @@ public class PostController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return NotFound(e.Message);
         }
     }
     
@@ -73,13 +72,13 @@ public class PostController : ControllerBase
     {
         try
         {
-            var response = await _postService.DeletePost(request.Id);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _postService.DeletePost(request.Id, userId);
             return Ok(response);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
@@ -89,13 +88,13 @@ public class PostController : ControllerBase
     {
         try
         {
-            var response = await _postService.UpdatePost(request.Id, request.Content);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var response = await _postService.UpdatePost(request.Id, request.Content, userId);
             return Ok(response);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
     
